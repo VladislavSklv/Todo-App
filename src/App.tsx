@@ -1,24 +1,50 @@
-import { Stack, TextField, Button } from '@mui/material';
+import { TextField, Container, createTheme, ThemeProvider, ListItemButton, ListItemText, IconButton} from '@mui/material';
 import React, { useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function App() {
 	const [query, setQuery] = useState('');
+	const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+	const theme = React.useMemo(() =>
+		createTheme({
+			palette: {
+			mode: isDarkTheme ? 'dark' : 'light',
+			},
+		}), [isDarkTheme]
+	);
+
+	const todos = [
+		{id: 1, text: 'Go shopping'},
+		{id: 2, text: 'Take pills'},
+		{id: 3, text: 'Turn off the TV'}
+	]
 
 	return (
-		<div className='App'>
-			<Stack direction={'row'} spacing={2}>
+		<ThemeProvider theme={theme}>
+			<Container>
 				<TextField 
-					id="outlined-basic" 
+					id="searchbar" 
 					label="Search" 
-					variant="outlined"
+					fullWidth
 					value={query}
 					onChange={(e) => setQuery(e.target.value)} 
 				/>
-				<Button variant="contained" color="success">
-					<span style={{fontSize: 30, lineHeight: 1}}>+</span>
-				</Button>
-			</Stack>
-		</div>
+				<div className='todo-list'>
+					{todos.map(todo => (
+						<ListItemButton 
+							component="a" 
+							href="#simple-list"
+						>
+							<ListItemText primary={todo.text} />
+							<IconButton aria-label="comment">
+								<DeleteIcon/> 
+							</IconButton>
+						</ListItemButton>
+					))}
+				</div>
+			</Container>
+		</ThemeProvider>
 	);
 }
 
