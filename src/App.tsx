@@ -1,10 +1,16 @@
-import { TextField, Container, createTheme, ThemeProvider, ListItemButton, ListItemText, IconButton} from '@mui/material';
+import { TextField, Container, createTheme, ThemeProvider, ListItemButton, ListItemText, IconButton } from '@mui/material';
 import React, { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useAppDispatch, useAppSelector } from './hooks/reduxHooks';
+import { addTodo } from './redux/todosSlice';
+
 
 function App() {
 	const [query, setQuery] = useState('');
 	const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+	const dispatch = useAppDispatch();
+	const todos = useAppSelector(state => state.todos);
 
 	const theme = React.useMemo(() =>
 		createTheme({
@@ -14,30 +20,37 @@ function App() {
 		}), [isDarkTheme]
 	);
 
-	const todos = [
-		{id: 1, text: 'Go shopping'},
-		{id: 2, text: 'Take pills'},
-		{id: 3, text: 'Turn off the TV'}
-	]
-
 	return (
 		<ThemeProvider theme={theme}>
 			<Container>
 				<TextField 
 					id="searchbar" 
-					label="Search" 
+					label="Todo text" 
 					fullWidth
 					value={query}
 					onChange={(e) => setQuery(e.target.value)} 
 				/>
+				<button
+					onClick={() => {
+						if(query.length > 0){
+							dispatch(addTodo({id: Date.now(), isActive: true, text: query}));
+						}
+					}}
+				>Add</button>
 				<div className='todo-list'>
 					{todos.map(todo => (
 						<ListItemButton 
-							component="a" 
-							href="#simple-list"
+							key={todo.id}
+							onClick={() => console.log('add')}
 						>
 							<ListItemText primary={todo.text} />
-							<IconButton aria-label="comment">
+							<IconButton
+								aria-label="comment"
+								onClick={(e) => {
+									e.stopPropagation();
+									console.log('delete')
+								}}
+							>
 								<DeleteIcon/> 
 							</IconButton>
 						</ListItemButton>
